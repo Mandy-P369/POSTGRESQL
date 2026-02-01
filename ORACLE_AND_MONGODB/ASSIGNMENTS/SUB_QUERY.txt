@@ -1,0 +1,789 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Thu Dec 4 09:06:46 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Thu Dec 04 2025 08:57:49 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> connect user1/pass1
+Connected.
+SQL> Select * from tab ;
+
+TNAME
+--------------------------------------------------------------------------------
+TABTYPE        CLUSTERID
+------------- ----------
+FOOTBALL
+TABLE
+
+BIN$xHIN97OCSWCi6vlqAiSrrw==$0
+TABLE
+
+CUSTOMERS
+TABLE
+
+
+TNAME
+--------------------------------------------------------------------------------
+TABTYPE        CLUSTERID
+------------- ----------
+CRICKETERS
+TABLE
+
+PRODUCT
+TABLE
+
+
+SQL> create table employees (empid number primary key , empname varchar(15),job varchar(15),salary number,dept_id number,manager_id number references employees);
+
+Table created.
+
+SQL> desc employees;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMPID                                     NOT NULL NUMBER
+ EMPNAME                                            VARCHAR2(15)
+ JOB                                                VARCHAR2(15)
+ SALARY                                             NUMBER
+ DEPT_ID                                            NUMBER
+ MANAGER_ID                                         NUMBER
+
+SQL> insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id);
+Enter value for empid: 1
+Enter value for empname: devvrat
+Enter value for job: SDE
+Enter value for salary: 98765
+Enter value for dept_id: 1
+Enter value for manager_id: 2
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (1,'devvrat','SDE',98765,1,2)
+insert into employees values (1,'devvrat','SDE',98765,1,2)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (USER1.SYS_C008513) violated - parent key not
+found
+
+
+SQL> 2/
+SP2-0042: unknown command "2/" - rest of line ignored.
+SQL>
+SQL> insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id);
+Enter value for empid: 1
+Enter value for empname: devbeta
+Enter value for job: SDE
+Enter value for salary: 87654
+Enter value for dept_id: 1
+Enter value for manager_id: 1
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (1,'devbeta','SDE',87654,1,1)
+
+1 row created.
+
+SQL> /
+Enter value for empid: 2
+Enter value for empname: Parthbhaiya
+Enter value for job: Executive
+Enter value for salary: 45678
+Enter value for dept_id: 1
+Enter value for manager_id: 2
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (2,'Parthbhaiya','Executive',45678,1,2)
+
+1 row created.
+
+SQL> /
+Enter value for empid: 3
+Enter value for empname: aayush
+Enter value for job: Data analyst
+Enter value for salary: 98756
+Enter value for dept_id: 2
+Enter value for manager_id: 1
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (3,'aayush','Data analyst',98756,2,1)
+
+1 row created.
+
+SQL> /
+Enter value for empid: 4
+Enter value for empname: Veer
+Enter value for job: SDE
+Enter value for salary: 123456
+Enter value for dept_id: 2
+Enter value for manager_id: 1
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (4,'Veer','SDE',123456,2,1)
+
+1 row created.
+
+SQL> /
+Enter value for empid: 5
+Enter value for empname: Krishna
+Enter value for job: Editor
+Enter value for salary: 95678
+Enter value for dept_id: 3
+Enter value for manager_id: 2
+old   1: insert into employees values (&empid,'&empname','&job',&salary,&dept_id,&manager_id)
+new   1: insert into employees values (5,'Krishna','Editor',95678,3,2)
+
+1 row created.
+
+SQL> Select * from employees;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         4 Veer            SDE                 123456          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> Select empname ,salary from employees where salary >(select salary from employees where empid=1);
+
+EMPNAME             SALARY
+--------------- ----------
+aayush               98756
+Veer                123456
+Krishna              95678
+
+SQL> /*Display employees who have the same job as ‘Suresh’.*/
+SQL> /*Display employees who have the same job as ‘Veer’.*/
+SQL> Select empname,job from employees where job='SDE';
+
+EMPNAME         JOB
+--------------- ---------------
+devbeta         SDE
+Veer            SDE
+
+SQL> Select empname,job from employees where job=(select job from employees where empname='Veer');
+
+EMPNAME         JOB
+--------------- ---------------
+devbeta         SDE
+Veer            SDE
+
+SQL> /*● Show employees with salary less than the average salary of the company.*/
+SQL> Select empname,salary from employees where salary <(select avg(salary) from employees);
+
+EMPNAME             SALARY
+--------------- ----------
+devbeta              87654
+Parthbhaiya          45678
+
+SQL> /*List employees who work in the same department as the highest paid employee.*/
+SQL> Select 8
+  2
+SQL>
+SQL> Select max(salary) from employees where job=(select job from employees where job='SDE');
+Select max(salary) from employees where job=(select job from employees where job='SDE')
+                                             *
+ERROR at line 1:
+ORA-01427: single-row subquery returns more than one row
+
+
+SQL> Select max(salary) from employees where job= all(select job from employees where job='SDE');
+
+MAX(SALARY)
+-----------
+     123456
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE');
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDE')
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE') group by empname;
+
+EMPNAME         MAX(SALARY)
+--------------- -----------
+devbeta               87654
+Veer                 123456
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE') group by empname order by salary desc fetch first 1 roes only;
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDE') group by empname order by salary desc fetch first 1 roes only
+                                                                                                                                                        *
+ERROR at line 1:
+ORA-00905: missing keyword
+
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE') group by empname order by salary desc fetch first 1 rows only;
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDE') group by empname order by salary desc fetch first 1 rows only
+                                                                                                                              *
+ERROR at line 1:
+ORA-00979: not a GROUP BY expression
+
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE')order by salary desc fetch first 1 rows only;
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDE')order by salary desc fetch first 1 rows only
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDe');
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDe')
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+
+SQL> Select empname,max(salary) from employees where job= all(select job from employees where job='SDE');
+Select empname,max(salary) from employees where job= all(select job from employees where job='SDE')
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+
+SQL> Select max(salary) from employees where job= all(select job from employees where job='SDE');
+
+MAX(SALARY)
+-----------
+     123456
+
+SQL> Select empname ,salary from employees where job='SDE' order by salary desc ;
+
+EMPNAME             SALARY
+--------------- ----------
+Veer                123456
+devbeta              87654
+
+SQL> Select empname ,salary from employees where job='SDE' order by salary desc fetch first 1 rows only ;
+
+EMPNAME             SALARY
+--------------- ----------
+Veer                123456
+
+SQL> /*List employees who work in the same department as the highest paid employee.*/
+SQL> /* Show employees whose salary is greater than the minimum salary in the company.*/
+SQL> Select empname ,salary from employees where salary >(select min(salary) from employees);
+
+EMPNAME             SALARY
+--------------- ----------
+devbeta              87654
+aayush               98756
+Veer                123456
+Krishna              95678
+
+SQL> /* Multiple-Row Subqueries (IN / ANY / ALL) */
+SQL> /*● List employees whose salary is equal to any manager’s salary.*/
+SQL> Select empname,salary from employees where salary = (Select salary from employees where manager_id = 1);
+Select empname,salary from employees where salary = (Select salary from employees where manager_id = 1)
+                                                     *
+ERROR at line 1:
+ORA-01427: single-row subquery returns more than one row
+
+
+SQL> Select empname,salary from employees where salary = all(Select salary from employees where manager_id = 1);
+
+no rows selected
+
+SQL> Select empname,salary from employees where salary = any(Select salary from employees where manager_id = 1);
+
+EMPNAME             SALARY
+--------------- ----------
+devbeta              87654
+aayush               98756
+Veer                123456
+
+SQL> /* Display employees who earn more than all CLERKS.*/
+SQL> select * from employees;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         4 Veer            SDE                 123456          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> /* Display employees who earn more than all CLERKS.*/
+SQL> Select empname,salary from employees where salary>all(select salary from employees where job='Editor'):
+  2  ;
+Select empname,salary from employees where salary>all(select salary from employees where job='Editor'):
+                                                                                                      *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> Select empname,salary from employees where salary>all(select salary from employees where job='Editor')
+  2  ;
+
+EMPNAME             SALARY
+--------------- ----------
+aayush               98756
+Veer                123456
+
+SQL> /* Show employees whose manager_id is IN list of employees working in dept_id = 10.*/
+SQL> Select empname from employees where manager_id in(1,2,3) ;
+
+EMPNAME
+---------------
+devbeta
+Parthbhaiya
+aayush
+Veer
+Krishna
+
+SQL> Select empname,manager_id from employees where manager_id in(1,2,3) ;
+
+EMPNAME         MANAGER_ID
+--------------- ----------
+devbeta                  1
+Parthbhaiya              2
+aayush                   1
+Veer                     1
+Krishna                  2
+
+SQL> Select empname,manager_id from employees where manager_id in(1,2,3) and dept_id = 1; ;
+Select empname,manager_id from employees where manager_id in(1,2,3) and dept_id = 1;
+                                                                                   *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> Select empname,manager_id from employees where manager_id in(1,2,3) and dept_id = 1 ;
+
+EMPNAME         MANAGER_ID
+--------------- ----------
+devbeta                  1
+Parthbhaiya              2
+
+SQL> Select empname,manager_id from employees where manager_id in(1,2,3) and dept_id = 2 ;
+
+EMPNAME         MANAGER_ID
+--------------- ----------
+aayush                   1
+Veer                     1
+
+SQL> Select empname,manager_id from employees where manager_id in(1,2,3) and dept_id = 3 ;
+
+EMPNAME         MANAGER_ID
+--------------- ----------
+Krishna                  2
+
+SQL> /*● Find employees whose job is same as any employee earning more than ₹50,000.*/
+SQL> select empname from employees where job=all(select job from employees where salary>50000);
+
+no rows selected
+
+SQL> select empname from employees where job=any(select job from employees where salary>50000);
+
+EMPNAME
+---------------
+devbeta
+Veer
+aayush
+Krishna
+
+SQL> select job from employees where salary>50000);
+select job from employees where salary>50000)
+                                            *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select job from employees where salary>50000;
+
+JOB
+---------------
+SDE
+Data analyst
+SDE
+Editor
+
+SQL> select job,salary from employees where salary>50000;
+
+JOB                 SALARY
+--------------- ----------
+SDE                  87654
+Data analyst         98756
+SDE                 123456
+Editor               95678
+
+SQL> select job,salary from employees where salary<50000;
+
+JOB                 SALARY
+--------------- ----------
+Executive            45678
+
+SQL> /*Display employees whose dept_id is same as any employee named ‘Devbeta’*/
+SQL> Select empname ,dept_id from employees where dept_id = (select dept_id from employees where empname='devbeta');
+
+EMPNAME            DEPT_ID
+--------------- ----------
+devbeta                  1
+Parthbhaiya              1
+
+SQL> Select empname ,dept_id from employees where dept_id = (select dept_id from employees where empname='aayush');
+
+EMPNAME            DEPT_ID
+--------------- ----------
+aayush                   2
+Veer                     2
+
+SQL> Select empname ,dept_id from employees where dept_id = (select dept_id from employees where empname='');
+
+no rows selected
+
+SQL> Select empname ,dept_id from employees where dept_id = (select dept_id from employees where empname='krishna');
+
+no rows selected
+
+SQL> Select empname ,dept_id from employees where dept_id = (select dept_id from employees where empname='Krishna');
+
+EMPNAME            DEPT_ID
+--------------- ----------
+Krishna                  3
+
+SQL> /* */
+SQL>  
+
+ HELP
+ ----
+
+ Accesses this command line help system. Enter HELP INDEX or ? INDEX
+ for a list of topics.
+
+ You can view SQL*Plus resources at
+     http://www.oracle.com/technology/documentation/
+
+ ******************************************************************************
+
+ HELP|? [topic]
+
+
+SQL>  Correlated Subqueries (WHERE with same table)
+SP2-0734: unknown command beginning "Correlated..." - rest of line ignored.
+SQL> /*● Show employees whose salary is higher than salary of their manager. */
+SQL> Select empname,salary from employees where salary>(select salary from employees where
+  2   Correlated Subqueries (WHERE with same table)
+  3
+SQL>
+SQL>
+SQL> /*● Show employees whose salary is higher than salary of their manager. */
+SQL> Select empname ,salary from employees where salary>all(select salary from employees where manager_id = 2);
+
+EMPNAME             SALARY
+--------------- ----------
+aayush               98756
+Veer                123456
+
+SQL> Select empname ,salary from employees where salary>all(select salary from employees where manager_id = (select manager_id from employees where salary>);
+Select empname ,salary from employees where salary>all(select salary from employees where manager_id = (select manager_id from employees where salary>)
+                                                                                                                                                      *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select empname ,salary from employees where salary>all(select salary from employees where manager_id = (select manager_id from employees where salary>
+  2  60000);)
+  3  ;
+60000);)
+      *
+ERROR at line 2:
+ORA-00907: missing right parenthesis
+
+
+SQL> Select empname ,salary from employees where salary>all(select salary from employees where manager_id = (select manager_id from employees
+  2
+SQL>
+SQL>
+SQL> Select manager_id from employees where salary>60000;
+
+MANAGER_ID
+----------
+         1
+         1
+         1
+         2
+
+SQL> Select empname ,salary from employees where salary>all(select salary from employees where manager_id in (1,2,3));
+
+no rows selected
+
+SQL> Select empname ,salary from employees where salary>any(select salary from employees where manager_id in (1,2,3));
+
+EMPNAME             SALARY
+--------------- ----------
+Veer                123456
+aayush               98756
+Krishna              95678
+devbeta              87654
+
+SQL> Select * from employees;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         4 Veer            SDE                 123456          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> /*● Show employees whose salary is higher than salary of their manager. */
+SQL> Select empname,salary from employees where salary>(Select salary from manager_id);
+Select empname,salary from employees where salary>(Select salary from manager_id)
+                                                                      *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> Select empname,salary from employees where salary>all(Select salary from employees where group by manager_id);
+Select empname,salary from employees where salary>all(Select salary from employees where group by manager_id)
+                                                                                         *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select empname,salary from employees where salary>any(Select salary from employees where group by manager_id);
+Select empname,salary from employees where salary>any(Select salary from employees where group by manager_id)
+                                                                                         *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select empname,salary from employees where salary>any(Select salary from employees  group by manager_id);
+Select empname,salary from employees where salary>any(Select salary from employees  group by manager_id)
+                                                             *
+ERROR at line 1:
+ORA-00979: not a GROUP BY expression
+
+
+SQL> Select empname,salary from employees where salary>any(Select salary from employees where manager_id in (1,2,3);
+Select empname,salary from employees where salary>any(Select salary from employees where manager_id in (1,2,3)
+                                                                                                             *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> Select empname,salary from employees where salary>any(Select salary from employees where manager_id in (1,2,3));
+
+EMPNAME             SALARY
+--------------- ----------
+Veer                123456
+aayush               98756
+Krishna              95678
+devbeta              87654
+
+SQL> /*Find employees who have the highest salary in their department.*/
+SQL> Select * from employees where salary>all(Select salary from employees where dept_id in (1,2,3));
+
+no rows selected
+
+SQL> Select * from employees where salary>any(Select salary from employees where dept_id in (1,2,3));
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         4 Veer            SDE                 123456          2          1
+         3 aayush          Data analyst         98756          2          1
+         5 Krishna         Editor               95678          3          2
+         1 devbeta         SDE                  87654          1          1
+
+SQL> /*List employees whose salary is below the average salary of their department.*/
+SQL> Select * from employees where salary(select avg(salary) from employees where dept_id=1);
+Select * from employees where salary(select avg(salary) from employees where dept_id=1)
+                                     *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select * from employees where salary(select avg(salary) from employees where dept_id=1);
+Select * from employees where salary(select avg(salary) from employees where dept_id=1)
+                                     *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select * from employees where salary(,select avg(salary) from employees where dept_id=1);
+Select * from employees where salary(,select avg(salary) from employees where dept_id=1)
+                                     *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select * from employees where salary(select avg(salary) from employees where dept_id=1);
+Select * from employees where salary(select avg(salary) from employees where dept_id=1)
+                                     *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> Select * from employees where salary<(select avg(salary) from employees where dept_id=1);
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         2 Parthbhaiya     Executive            45678          1          2
+
+SQL> /*Display employees whose job exists more than once in the table (i.e., duplicate job */
+SQL> titles).
+SP2-0042: unknown command "titles)." - rest of line ignored.
+SQL>
+SQL> /*Display employees whose job exists more than once in the table (i.e., duplicate job */+
+SP2-0042: unknown command "+" - rest of line ignored.
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL>
+SQL> /*Display employees whose job exists more than once in the table (i.e., duplicate job */
+SQL> select e1.job from employees e1
+  2  join
+  3  employees e2 on e2.emp_id = e1.emp_id;
+employees e2 on e2.emp_id = e1.emp_id
+                            *
+ERROR at line 3:
+ORA-00904: "E1"."EMP_ID": invalid identifier
+
+
+SQL> select e1.job from employees e1
+  2  left join
+  3  employees e2 on e2.emp_id = e1.emp_id;
+employees e2 on e2.emp_id = e1.emp_id
+                            *
+ERROR at line 3:
+ORA-00904: "E1"."EMP_ID": invalid identifier
+
+
+SQL> select e1.job from employees e1
+  2  join
+  3  employees e2 on e2.empid = e1.empid;
+
+JOB
+---------------
+SDE
+Executive
+Data analyst
+SDE
+Editor
+
+SQL> select e2.empname,e1.job from employees e1
+  2  join
+  3  employees e2 on e2.empid = e1.empid;
+
+EMPNAME         JOB
+--------------- ---------------
+devbeta         SDE
+Parthbhaiya     Executive
+aayush          Data analyst
+Veer            SDE
+Krishna         Editor
+
+SQL> select e1.job from employees e1
+  2  join
+  3  employees e2 on e2.empid = e1.empid having dept_id = 2;
+employees e2 on e2.empid = e1.empid having dept_id = 2
+                                           *
+ERROR at line 3:
+ORA-00918: column ambiguously defined
+
+
+SQL> select e1.job from employees e1
+  2  join
+  3  employees e2 on e2.empid = e1.empid where dept_id = 2;
+employees e2 on e2.empid = e1.empid where dept_id = 2
+                                          *
+ERROR at line 3:
+ORA-00918: column ambiguously defined
+
+
+SQL> Select * from  employees ;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         4 Veer            SDE                 123456          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> /*Display employees whose job exists more than once in the table (i.e., duplicate job */
+SQL> Select * from employees where job=(select job from employees where job in ('SDE'));
+Select * from employees where job=(select job from employees where job in ('SDE'))
+                                   *
+ERROR at line 1:
+ORA-01427: single-row subquery returns more than one row
+
+
+SQL> Select * from employees where job=all(select job from employees where job in ('SDE'));
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         4 Veer            SDE                 123456          2          1
+
+SQL> Select count(job) from employees where job=all(select job from employees where job in ('SDE'));
+
+COUNT(JOB)
+----------
+         2
+
+SQL> Select * from employees where job=all(select job from employees where job='SDE');
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         4 Veer            SDE                 123456          2          1
+
+SQL> Select * from employees where job=all(select job from employees where job in ('SDE','Executive','Editor','Data Analyst'));
+
+no rows selected
+
+SQL> Select * from employees where job=any(select job from employees where job in ('SDE','Executive','Editor','Data Analyst'));
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         4 Veer            SDE                 123456          2          1
+         2 Parthbhaiya     Executive            45678          1          2
+         5 Krishna         Editor               95678          3          2
+
+SQL> Select * from employees where job=any(select job from employees where job in ('SDE','Executive','Editor','Data analyst'));
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         4 Veer            SDE                 123456          2          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> Select * from  employees ;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- --------------- --------------- ---------- ---------- ----------
+         1 devbeta         SDE                  87654          1          1
+         2 Parthbhaiya     Executive            45678          1          2
+         3 aayush          Data analyst         98756          2          1
+         4 Veer            SDE                 123456          2          1
+         5 Krishna         Editor               95678          3          2
+
+SQL> /*Show employees who do not have a manager (top-level employees).*/
+SQL> select * from employees where manager_id is null;
+
+no rows selected
+
+SQL> insert into employees values(6,'raj','CEO',1232596,null,null);
+
+1 row created.
+
+SQL> select * from employees where manager_id is null;
+
+     EMPID EMPNAME         JOB                 SALARY    DEPT_ID MANAGER_ID
+---------- -
