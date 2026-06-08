@@ -1,0 +1,8 @@
+"column_name","data_type"
+"university_id","integer"
+"name","character varying"
+"established_year","integer"
+"ranking","integer"
+"country","character varying"
+"state","character varying"
+"city","character varying"

@@ -1,27 +1,25 @@
-								-- JOINS--
-Select * from traindata ;
-Select * from testdata ;
-
-Select train.transaction_id,test.transaction_id,
-concat(train.first,' ',train.last) as customer_name 
-from traindata as train 
-inner join 
-testdata as test 
-on train.transaction_id = test.transaction_id ;
-
-create table innerjoin as (Select train.transaction_id,
-concat(train.first,' ',train.last) as customer_name,train.amt
-from traindata as train 
-inner join 
-testdata as test 
-on train.transaction_id = test.transaction_id 
-) ; 
-
-Select * from innerjoin ;
-drop table innerjoin ;
-
-Select sum(amt) from innerjoin ; 
+-- Inner join 
+Select  column_name,data_type from information_schema.columns where table_name='university'
+Select column_name,data_type from information_schema.columns where table_name ='colleges'
 
 
--- Total Amount of the remaining data on the both table except the data follow innner join 
-Select 
+Select * from university;
+Select * from colleges;
+
+Select u.university_id ,u.name as university_name,u.established_year,c.name
+from university as u
+inner join
+colleges c on u.university_id = c.university_id
+order by university_name ;
+
+-- Number of colleges inside the particular university 
+Select distinct u.name as university_name,count(c.name) as Totalcolleges from university u
+inner join
+colleges c on c.university_id = u.university_id group by university_name order by totalcolleges desc ;
+
+Select * from university;
+
+Select distinct u.name as university_name,count(c.name) as total_colleges from university u
+right join 
+colleges c 
+on u.university_id = c.university_id group by university_name order by total_colleges desc ;

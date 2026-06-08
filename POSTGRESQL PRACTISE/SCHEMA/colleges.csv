@@ -1,0 +1,6 @@
+"column_name","data_type"
+"college_id","integer"
+"university_id","integer"
+"name","character varying"
+"dean","character varying"
+"established_year","integer"

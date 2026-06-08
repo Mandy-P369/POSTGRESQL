@@ -1,0 +1,6 @@
+"column_name","data_type"
+"dept_id","integer"
+"college_id","integer"
+"name","character varying"
+"building","character varying"
+"head","character varying"

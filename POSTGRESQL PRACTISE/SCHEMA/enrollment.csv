@@ -1,0 +1,6 @@
+"column_name","data_type"
+"enrollment_id","integer"
+"student_id","integer"
+"section_id","integer"
+"grade","character varying"
+"course_id","integer"

@@ -1,0 +1,8 @@
+"column_name","data_type"
+"instructor_id","integer"
+"first_name","character varying"
+"last_name","character varying"
+"dept_id","integer"
+"hire_date","date"
+"title","character varying"
+"yearofhiring","integer"

@@ -1,3 +1,4 @@
+
 Select * from traindata ;
 Select * from testdata ;
 
@@ -28,14 +29,27 @@ Select * from traindata limit 10 ;
 Select * from trainview ; 
 drop table trainview ;
 
-
 create view trainview as (select * from traindata order by transaction_id limit 10000 );
 Select * from trainview ; 
 
-
-
 Select column_name,data_type from information_schema.columns 
 where table_name = 'trainview';
+
+Select * from trainview ; 
+
+create view testview  as(Select * from testdata order by transaction_id limit 10000);
+Select * from testview ;
+Select * from trainview;
+
+Select train.transaction_id,test.transaction_id,train.cc_num,test.cc_num from trainview train
+inner join 
+testview test on train.transaction_id = test.transaction_id ;
+
+
+
+
+
+
 
 
 
