@@ -36,9 +36,46 @@ student s on s.student_id = e.student_id
 where grade = 'D';
 
 -- Check 
-Select count(*) from enrollment where grade ='D' ; 
-    
+Select count(*) from enrollment where grade ='D' ;
+
+Select * from student; 
+Select * from instructor;
+Select * from student 
+
+
+create table Employee as(
+Select a.advisor_id as emp_id,concat(s.first_name,' ',s.last_name) as empname,s.student_id 
+		from student s 
+		left join 
+		advisor a on a.student_id = s.student_id
+		left join 
+		instructor i on i.instructor_id = a.instructor_id 
+		order by advisor_id asc
+);
+
+Select * from Employee ;
+drop table Demotable ;
+alter table Employee rename student_id to manager_id ;
+Select * from Employee where manager_id = 4028 ; 
+
+Select * from university ;
+Select * from colleges ;
+Select * from department;
+
+Select distinct u.name  as university_name ,count(d.head) as total_head from university u 
+left join
+colleges c on c.university_id = u.university_id
+left join 
+department d on d.college_id = c.college_id 
+group by university_name order by total_head desc;
 
 
 
-
+Select distinct  u.name as university_name,
+count(d.name) as total_department from university u 
+left join 
+colleges c on c.university_id = u.university_id
+left join 
+department d  on d.college_id = c.college_id where d.name = 'Mathematics Dept'
+group by university_name
+order by total_department ;
