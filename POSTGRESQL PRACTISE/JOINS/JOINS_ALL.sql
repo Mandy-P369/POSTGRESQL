@@ -1,3 +1,4 @@
+
 Select * from university ;
 Select * from colleges ;
 Select * from department;
@@ -44,7 +45,7 @@ Select * from student
 
 
 create table Employee as(
-Select a.advisor_id as emp_id,concat(s.first_name,' ',s.last_name) as empname,s.student_id 
+Select a.advisor_id as emp_id,concat(s.first_name,' ',s.last_name) as empname,concat(i.ins)
 		from student s 
 		left join 
 		advisor a on a.student_id = s.student_id
@@ -54,7 +55,7 @@ Select a.advisor_id as emp_id,concat(s.first_name,' ',s.last_name) as empname,s.
 );
 
 Select * from Employee ;
-drop table Demotable ;
+drop table Employee;
 alter table Employee rename student_id to manager_id ;
 Select * from Employee where manager_id = 4028 ; 
 
@@ -79,3 +80,10 @@ left join
 department d  on d.college_id = c.college_id where d.name = 'Mathematics Dept'
 group by university_name
 order by total_department ;
+
+
+Select * from Employee
+
+
+
+
