@@ -81,9 +81,45 @@ department d  on d.college_id = c.college_id where d.name = 'Mathematics Dept'
 group by university_name
 order by total_department ;
 
+Select * from Employee;
 
-Select * from Employee
 
+-- Subquery Examples 
+Select * from employee ;
+select * from course ;
+Select * from course where credits >=  (Select max(credits) from course);
+
+
+-- Number of courses in department
+Select distinct d.name as department_name,count(c.name) as totalcourses from department d
+left join
+course c on c.dept_id = d.dept_id
+group by department_name ;
+
+
+Select * from university;
+-- Number of students having the name started with the letter 'p' inside the specific department in a specific colleges 
+Select  distinct c.name as college_name,count(s.student_id) as total_students
+from university u    
+left join 
+colleges c on c.university_id = u.university_id 
+left join 
+student s on s.college_id = c.college_id
+where u.name like 'M%' group by  college_name having count(student_id)<>0 order by total_students desc;
+
+
+
+Select distinct u.name as university_name from university u 
+where exists
+(
+Select  distinct c.name as college_name,count(s.student_id) as total_students
+from university u    
+left join  
+colleges c on c.university_id = u.university_id 
+left join 
+student s on s.college_id = c.college_id
+where u.name like 'M%' group by  college_name having count(student_id)<>0 order by total_students desc
+)
 
 
 
