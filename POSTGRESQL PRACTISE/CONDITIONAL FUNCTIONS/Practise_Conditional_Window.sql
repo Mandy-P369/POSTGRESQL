@@ -38,11 +38,40 @@ Select * from testdata  order by amt desc ;
 -- you define (e.g., >10000 high, 1000-10000 medium, else low) using a CASE statement.
 
 Select max(amt) from traindata ; 
-Select * from testdata order by transaction_id desc limit 1 ;
+Select * from testdata order by transaction_id desc limit 10 ;
+
+Select case 
+	when amt>0 and amt<=10000 then 'Low'
+	when amt>10000.01 and amt<=20000 then 'Medium'
+	when amt>20000.01 and amt<=28948.9 then 'High'
+end as Grade,
+count(*) as Number_of_transactions,
+ROUND(sum(amt)::numeric,2) as Total_Amount
+from traindata group by Grade order by Total_Amount ;
+
+
+Select * from traindata order by transaction_id desc limit 50 ;
 
 
 
+Select 
+row_number() over(partition by transaction_date) as "Latest_Transaction" from traindata;
 
+-- Ranks customers by spending 
+Select * from traindata limit 50;
+Select count(distinct cc_num) from traindata ;
+
+							-- My Query
+Select distinct cc_num as Customer_number,
+ROUND(sum(amt)::numeric,0) as Total_amount,
+row_number() over(order by sum(amt)) as "Rank_by_Spending" from traindata 
+group by Customer_number order by Total_amount ;
+
+							-- Actual Query should be 
+Select distinct cc_num as Customer_number,
+ROUND(sum(amt)::numeric,0) as Total_amount,
+row_number() over(order by sum(amt) desc) as "Rank by Spending" from traindata
+group by Customer_number order by Total_amount;
 
 
 
